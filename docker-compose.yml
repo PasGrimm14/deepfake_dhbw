@@ -16,7 +16,7 @@ services:
     environment:
       - TZ=Europe/Berlin
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/favicon.svg"]
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
       timeout: 5s
       retries: 3
