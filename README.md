@@ -1,18 +1,19 @@
 # Deepfake Awareness Portal
 
-A modern multi-page React application about Deepfakes & Voice Cloning Awareness, built as a DHBW project.
+Ein modernes Multi-Page React-Projekt über Deepfakes & Voice Cloning Awareness, erstellt als DHBW-Projektarbeit.
 
 ## Tech Stack
 
-- **React 18** with **React Router v6**
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **Lucide React** for icons
-- **Vite** as build tool
+- **React 18** mit **React Router v6**
+- **Tailwind CSS** für Styling
+- **Framer Motion** für Animationen
+- **Lucide React** für Icons
+- **React Simple Maps** für die interaktive Weltkarte
+- **Vite** als Build-Tool
 
-## Pages
+## Seiten
 
-| Route | Page |
+| Route | Seite |
 |---|---|
 | `/` | Home / Landing |
 | `/was-sind-deepfakes` | Was sind Deepfakes & Voice Cloning? |
@@ -20,49 +21,108 @@ A modern multi-page React application about Deepfakes & Voice Cloning Awareness,
 | `/awareness-portal` | Awareness Portal (Quiz + Demos) |
 | `/deepfake-scanner` | Deepfake Scanner (Anthropic API) |
 | `/schutzmassnahmen` | Schutzmaßnahmen & Fazit |
-| `/template` | Template Page (blank scaffold) |
+| `/praesentation` | Präsentation (Canva Embed) |
+| `/quellen` | Quellenverzeichnis (Notion-Integration) |
+| `/template` | Template Page (leeres Scaffold) |
 
 ## Setup
 
 ```bash
-# Install dependencies
+# Abhängigkeiten installieren
 npm install
 
-# Start development server
+# Entwicklungsserver starten
 npm run dev
 
-# Build for production
+# Produktions-Build
 npm run build
 
-# Preview production build
+# Build-Vorschau
 npm run preview
 ```
 
 ## Deepfake Scanner — API Key
 
-The scanner page uses the Anthropic API. You can provide your API key in two ways:
+Die Scanner-Seite nutzt die Anthropic API (Modell: `claude-sonnet-4-20250514`). Der API-Key kann auf zwei Wegen angegeben werden:
 
-1. **In the UI** — Enter it directly on the `/deepfake-scanner` page. It's stored in `localStorage` and never sent anywhere except `api.anthropic.com`.
+1. **Im UI** — direkt auf der `/deepfake-scanner` Seite eingeben. Er wird in `localStorage` gespeichert und nur an `api.anthropic.com` gesendet.
 
-2. **Via `.env` file** — Copy `.env.example` to `.env` and add your key:
+2. **Per `.env`-Datei** — `.env.example` nach `.env` kopieren und Key eintragen:
    ```
    VITE_ANTHROPIC_API_KEY=sk-ant-api...
    ```
 
-> The key is only used for direct browser-to-Anthropic API calls. No backend required.
+> Der Key wird ausschließlich für direkte Browser-zu-Anthropic-API-Aufrufe verwendet. Kein Backend erforderlich.
 
-## Project Structure
+## Quellenverzeichnis — Notion-Integration
+
+Die Seite `/quellen` lädt Einträge live aus einer Notion-Datenbank und formatiert sie automatisch nach APA 7.
+
+### Umgebungsvariablen
+
+```
+VITE_NOTION_TOKEN=secret_...        # Notion Integration Token
+VITE_NOTION_DATABASE_ID=abc123...   # ID der Notion-Datenbank
+```
+
+### Entwicklung vs. Produktion
+
+| Umgebung | Zugriff |
+|---|---|
+| `npm run dev` | Vite-Proxy (`/notion-api` → `api.notion.com`) — kein CORS-Problem |
+| Netlify Deploy | Serverless Function (`netlify/functions/notion-proxy.js`) |
+
+### Notion-Datenbank — Felder
+
+| Feld | Typ | Beschreibung |
+|---|---|---|
+| `title` | Title | Titel des Werks |
+| `type` | Select | `journal` / `book` / `website` / `news` / `report` |
+| `category` | Select | Thematische Gruppe (z.B. `Technologie`) |
+| `authors` | Rich Text | Semikolon-getrennt: `Nachname, V.; Nachname2, V.` |
+| `year` | Rich Text | Erscheinungsjahr |
+| `journal` | Rich Text | Zeitschriftenname |
+| `volume` | Rich Text | Band |
+| `issue` | Rich Text | Heftnummer |
+| `pages` | Rich Text | Seitenzahlen |
+| `doi` | Rich Text | DOI ohne `https://doi.org/` |
+| `publisher` | Rich Text | Verlag (nur bei Büchern) |
+| `organization` | Rich Text | Herausgebende Organisation |
+| `outlet` | Rich Text | Nachrichtenquelle |
+| `url` | URL | Vollständige URL |
+| `accessDate` | Rich Text | Zugriffsdatum (nur bei veränderlichen Inhalten) |
+| `note` | Rich Text | Optionaler Hinweis |
+
+## Deployment (Netlify)
+
+```toml
+# netlify.toml (bereits konfiguriert)
+[build]
+  command   = "npm run build"
+  publish   = "dist"
+  functions = "netlify/functions"
+```
+
+Erforderliche Umgebungsvariablen in Netlify:
+- `NOTION_TOKEN` — Notion Integration Token (serverseitig, ohne `VITE_`-Prefix)
+
+## Projektstruktur
 
 ```
 src/
 ├── components/
-│   ├── NavBar.jsx          # Sticky top navigation with mobile menu
-│   ├── Footer.jsx          # Site footer with links
-│   ├── PageHero.jsx        # Reusable page hero banner
-│   ├── RiskBadge.jsx       # LOW / MEDIUM / HIGH / CRITICAL badge
-│   ├── InfoCard.jsx        # Icon + title + description card
-│   ├── AnimatedCounter.jsx # Count-up animation on scroll
-│   └── SectionDivider.jsx  # Visual section separator
+│   ├── NavBar.jsx            # Sticky Navigation mit Mobile-Menü
+│   ├── Footer.jsx            # Seitenfooter mit Links
+│   ├── PageHero.jsx          # Wiederverwendbarer Seiten-Hero
+│   ├── RiskBadge.jsx         # LOW / MEDIUM / HIGH / CRITICAL Badge
+│   ├── InfoCard.jsx          # Icon + Titel + Beschreibung Karte
+│   ├── AnimatedCounter.jsx   # Count-up-Animation beim Scrollen
+│   └── SectionDivider.jsx    # Visueller Abschnittstrenner
+├── data/
+│   ├── quellen.js            # Statische Fallback-Quellen (APA 7)
+│   └├── quellenUtils.js      # APA-7-Formatter & Hilfsfunktionen
+├── hooks/
+│   └── useNotion.js          # Notion-Daten-Hook mit Pagination
 ├── pages/
 │   ├── Home.jsx
 │   ├── WasSindDeepfakes.jsx
@@ -70,27 +130,34 @@ src/
 │   ├── AwarenessPortal.jsx
 │   ├── DeepfakeScanner.jsx
 │   ├── Schutzmassnahmen.jsx
-│   └── Template.jsx        # Blank page scaffold for new pages
+│   ├── Praesentation.jsx
+│   ├── Quellen.jsx
+│   └── Template.jsx          # Leeres Scaffold für neue Seiten
 ├── assets/
-├── App.jsx                 # Router setup + layout
+├── App.jsx                   # Router-Setup + Layout
 ├── main.jsx
-└── index.css               # Tailwind base + custom utilities
+└── index.css                 # Tailwind Base + eigene Utilities
 ```
 
-## Adding New Pages
+## Neue Seite hinzufügen
 
-1. Copy `src/pages/Template.jsx` to a new file
-2. Rename the exported component
-3. Add a route in `src/App.jsx`
-4. Add a link in `src/components/NavBar.jsx` → `navLinks` array
+1. `src/pages/Template.jsx` kopieren und umbenennen
+2. Exportierten Komponentennamen anpassen
+3. Route in `src/App.jsx` eintragen
+4. Link in `src/components/NavBar.jsx` → `navLinks`-Array ergänzen
 
 ## Design System
 
-| Token | Value |
+| Token | Wert |
 |---|---|
-| Primary accent | `red-600` / `red-700` |
+| Primary Accent | `red-600` / `red-700` |
 | Background | `white` / `gray-50` |
-| Card surface | `white` + `border-gray-200` |
-| Heading text | `gray-900` |
-| Body text | `gray-600` |
+| Card Surface | `white` + `border-gray-200` |
+| Heading | `gray-900` |
+| Body Text | `gray-600` |
 | Danger | `red-800` |
+| Font | Inter (Google Fonts) |
+
+## Disclaimer
+
+Dieses Portal dient ausschließlich zu Aufklärungszwecken. Der Deepfake Scanner nutzt KI-Analyse und ersetzt keine forensische Untersuchung. Alle Inhalte sind für Bildungszwecke im Rahmen der DHBW-Projektarbeit erstellt.
