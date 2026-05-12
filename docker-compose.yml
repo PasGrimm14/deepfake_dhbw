@@ -1,6 +1,6 @@
 services:
   deepfake-awareness:
-    image: ghcr.io/${PasGrimm14}/${deepfake_dhbw}:latest
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPO_NAME}:latest
     # Alternativ lokal bauen (ohne CI/CD):
     # build:
     #   context: .
