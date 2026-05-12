@@ -1,15 +1,7 @@
 services:
   deepfake-awareness:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPO_NAME}:latest
-    # Alternativ lokal bauen (ohne CI/CD):
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   args:
-    #     VITE_ANTHROPIC_API_KEY: ${VITE_ANTHROPIC_API_KEY:-}
-    #     VITE_NOTION_TOKEN: ${VITE_NOTION_TOKEN:-}
-    #     VITE_NOTION_DATABASE_ID: ${VITE_NOTION_DATABASE_ID:-}
-    ports: 
+    ports:
       - 3001:80
     container_name: deepfake-awareness
     restart: unless-stopped
@@ -19,18 +11,31 @@ services:
       - default
       - proxy-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD", "wget", "-qO-", "http://localhost/favicon.svg"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
-    # labels:
-      # Optionale Traefik-Labels – auskommentieren falls kein Traefik genutzt wird
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.deepfake.rule=Host(`deepfake.deine-domain.de`)"
-      # - "traefik.http.routers.deepfake.entrypoints=websecure"
-      # - "traefik.http.routers.deepfake.tls.certresolver=letsencrypt"
+
+  notion-proxy:
+    build:
+      context: ./notion-proxy
+      dockerfile: Dockerfile
+    container_name: notion-proxy
+    restart: unless-stopped
+    environment:
+      - NOTION_TOKEN=${NOTION_TOKEN}
+      - PORT=3002
+    networks:
+      - default
+      - proxy-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 networks:
   proxy-network:
-    name: proxy-network  # WICHTIG: Hier muss der exakte Name des Nginx-Netzwerks stehen (z.B. npm_default)
+    name: proxy-network
     external: true

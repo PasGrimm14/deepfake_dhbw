@@ -1,25 +1,21 @@
 /**
  * src/hooks/useNotion.js
  * ─────────────────────────────────────────────────────────────
- * Lädt Quellen aus Notion über einen lokalen Proxy.
- *
  * Entwicklung  → Vite-Proxy:     /notion-api  → api.notion.com
- * Production   → Netlify Function: /api/notion-proxy
+ * Production   → notion-proxy Container: /api/notion-proxy
  * ─────────────────────────────────────────────────────────────
  */
 
 import { useState, useEffect } from 'react'
 
-const IS_DEV         = import.meta.env.DEV
-const NOTION_TOKEN   = import.meta.env.VITE_NOTION_TOKEN
-const DATABASE_ID    = import.meta.env.VITE_NOTION_DATABASE_ID
+const IS_DEV        = import.meta.env.DEV
+const NOTION_TOKEN  = import.meta.env.VITE_NOTION_TOKEN
+const DATABASE_ID   = import.meta.env.VITE_NOTION_DATABASE_ID
 const NOTION_VERSION = '2022-06-28'
 
-// Dev:  direkt über Vite-Proxy (CORS wird serverseitig umgangen)
-// Prod: über Netlify Serverless Function
-const queryDatabase = IS_DEV
-  ? queryViaViteProxy
-  : queryViaNetlifyFunction
+// Proxy-URL: im Dev über Vite, in Prod über den notion-proxy Container
+// VITE_NOTION_PROXY_URL kann in .env auf z.B. https://notion-proxy.pasgri-cloud.de gesetzt werden
+const PROXY_URL = import.meta.env.VITE_NOTION_PROXY_URL ?? ''
 
 async function queryViaViteProxy(cursor) {
   const body = {
@@ -47,7 +43,7 @@ async function queryViaViteProxy(cursor) {
   return res.json()
 }
 
-async function queryViaNetlifyFunction(cursor) {
+async function queryViaProxy(cursor) {
   const body = {
     sorts: [
       { property: 'category', direction: 'ascending' },
@@ -56,7 +52,7 @@ async function queryViaNetlifyFunction(cursor) {
     ...(cursor ? { start_cursor: cursor } : {}),
   }
 
-  const res = await fetch('/api/notion-proxy', {
+  const res = await fetch(`${PROXY_URL}/api/notion-proxy`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ databaseId: DATABASE_ID, body }),
@@ -68,6 +64,8 @@ async function queryViaNetlifyFunction(cursor) {
   }
   return res.json()
 }
+
+const queryDatabase = IS_DEV ? queryViaViteProxy : queryViaProxy
 
 // ── Notion Property Helpers ───────────────────────────────────
 
@@ -82,19 +80,8 @@ function getText(prop) {
   }
 }
 
-/**
- * Parst den Autoren-String aus Notion.
- *
- * Empfohlenes Format in Notion (Feld "authors"):
- *   Nachname, V.; Nachname2, V.; Nachname3, V.
- *   (Semikolon als Trennzeichen zwischen Autoren)
- *
- * Alternativ mit " & " vor dem letzten Autor:
- *   Nachname, V.; Nachname2, V. & Nachname3, V.
- */
 function parseAuthors(raw) {
   if (!raw) return []
-  // Trenne auf " & " um den letzten Autor abzuspalten
   const withAmp = raw.split(' & ')
   const last    = withAmp.length > 1 ? withAmp.pop().trim() : null
   const rest    = withAmp.join(' & ').split(';').map((a) => a.trim()).filter(Boolean)
