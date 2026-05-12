@@ -1,0 +1,43 @@
+# Abhängigkeiten (werden im Container neu installiert)
+node_modules/
+
+# Build-Ausgabe
+dist/
+dist-ssr/
+
+# Umgebungsvariablen (niemals ins Image!)
+.env
+.env.local
+.env.*.local
+
+# Git-Metadaten
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Editor-Dateien
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Netlify (nicht benötigt im Docker-Build)
+netlify/
+netlify.toml
+
+# README
+README.md

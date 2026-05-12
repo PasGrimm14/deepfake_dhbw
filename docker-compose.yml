@@ -1,0 +1,29 @@
+services:
+  deepfake-awareness:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPO_NAME}:latest
+    # Alternativ lokal bauen (ohne CI/CD):
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     VITE_ANTHROPIC_API_KEY: ${VITE_ANTHROPIC_API_KEY:-}
+    #     VITE_NOTION_TOKEN: ${VITE_NOTION_TOKEN:-}
+    #     VITE_NOTION_DATABASE_ID: ${VITE_NOTION_DATABASE_ID:-}
+    container_name: deepfake-awareness
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3000}:80"
+    environment:
+      - TZ=Europe/Berlin
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/favicon.svg"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    # labels:
+      # Optionale Traefik-Labels – auskommentieren falls kein Traefik genutzt wird
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.deepfake.rule=Host(`deepfake.deine-domain.de`)"
+      # - "traefik.http.routers.deepfake.entrypoints=websecure"
+      # - "traefik.http.routers.deepfake.tls.certresolver=letsencrypt"
