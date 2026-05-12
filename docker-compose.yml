@@ -10,7 +10,7 @@ services:
     #     VITE_NOTION_TOKEN: ${VITE_NOTION_TOKEN:-}
     #     VITE_NOTION_DATABASE_ID: ${VITE_NOTION_DATABASE_ID:-}
     ports: 
-      - 3001:3001
+      - 3001:80
     container_name: deepfake-awareness
     restart: unless-stopped
     environment:
