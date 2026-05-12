@@ -62,8 +62,8 @@ jobs:
             VITE_NOTION_TOKEN=${{ secrets.VITE_NOTION_TOKEN }}
             VITE_NOTION_DATABASE_ID=${{ secrets.VITE_NOTION_DATABASE_ID }}
           # Cache für schnellere Builds
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
 
   # ─── Job 2: Deploy via Portainer Webhook ────────────────────
   deploy:
