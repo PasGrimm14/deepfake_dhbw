@@ -9,6 +9,7 @@ import AwarenessPortal from './pages/AwarenessPortal'
 import DeepfakeScanner from './pages/DeepfakeScanner'
 import Schutzmassnahmen from './pages/Schutzmassnahmen'
 import Praesentation from './pages/Praesentation'
+import Quellen from './pages/Quellen'
 import Template from './pages/Template'
 
 function AnimatedRoutes() {
@@ -23,6 +24,7 @@ function AnimatedRoutes() {
         <Route path="/deepfake-scanner" element={<DeepfakeScanner />} />
         <Route path="/schutzmassnahmen" element={<Schutzmassnahmen />} />
         <Route path="/praesentation" element={<Praesentation />} />
+        <Route path="/quellen" element={<Quellen />} />
         <Route path="/template" element={<Template />} />
       </Routes>
     </AnimatePresence>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Shield, Github, ExternalLink } from 'lucide-react'
+import { Shield, ExternalLink } from 'lucide-react'
 
 const footerLinks = [
   {
@@ -15,12 +15,13 @@ const footerLinks = [
     links: [
       { label: 'Deepfake Scanner', to: '/deepfake-scanner' },
       { label: 'Schutzmaßnahmen', to: '/schutzmassnahmen' },
-      { label: 'Template', to: '/template' },
+      { label: 'Präsentation', to: '/praesentation' },
     ],
   },
   {
     title: 'Ressourcen',
     links: [
+      { label: 'Quellenverzeichnis', to: '/quellen' },
       { label: 'Anthropic', href: 'https://anthropic.com', external: true },
       { label: 'MIT Media Lab', href: 'https://www.media.mit.edu', external: true },
       { label: 'BSI Bundesamt', href: 'https://www.bsi.bund.de', external: true },
