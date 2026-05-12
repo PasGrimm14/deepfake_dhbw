@@ -11,8 +11,6 @@ services:
     #     VITE_NOTION_DATABASE_ID: ${VITE_NOTION_DATABASE_ID:-}
     container_name: deepfake-awareness
     restart: unless-stopped
-    ports:
-      - "${HOST_PORT:-3000}:80"
     environment:
       - TZ=Europe/Berlin
     healthcheck:
