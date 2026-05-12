@@ -10,6 +10,7 @@ const navLinks = [
   { to: '/awareness-portal', label: 'Awareness Portal' },
   { to: '/deepfake-scanner', label: 'Scanner' },
   { to: '/schutzmassnahmen', label: 'Schutzmaßnahmen' },
+  { to: '/praesentation', label: 'Präsentation' },
 ]
 
 export default function NavBar() {
