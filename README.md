@@ -2,6 +2,10 @@
 
 Ein modernes Multi-Page React-Projekt über Deepfakes & Voice Cloning Awareness, erstellt als DHBW-Projektarbeit.
 
+## Projektteam
+- Pascal Grimm
+- Leonard Schmid
+
 ## Tech Stack
 
 - **React 18** mit **React Router v6**
