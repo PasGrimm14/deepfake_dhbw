@@ -110,12 +110,42 @@ const measures = {
 }
 
 const tools = [
-  { name: 'Hive Moderation', desc: 'KI-gestützte Bild- und Video-Authentizitätsprüfung', category: 'Detection', href: '#' },
-  { name: 'Microsoft Video Authenticator', desc: 'Echtzeit-Deepfake-Analyse für Videos', category: 'Detection', href: '#' },
-  { name: 'Reality Defender', desc: 'Enterprise-Lösung für Deepfake-Erkennung in Echtzeit', category: 'Enterprise', href: '#' },
-  { name: 'Content Credentials (C2PA)', desc: 'Offener Standard für Medien-Provenance', category: 'Standard', href: '#' },
-  { name: 'InVID / WeVerify', desc: 'Video-Faktencheck-Tool für Journalisten', category: 'Journalismus', href: '#' },
-  { name: 'TrueMedia.org', desc: 'Non-profit Deepfake-Analyse für politische Inhalte', category: 'Non-Profit', href: '#' },
+  {
+    name: 'Hive Moderation',
+    desc: 'KI-gestützte Bild- und Video-Authentizitätsprüfung — erkennt KI-generierte Inhalte, Deepfakes und manipulierte Medien über eine einfache API.',
+    category: 'Detection',
+    href: 'https://hivemoderation.com/ai-generated-content-detection',
+  },
+  {
+    name: 'Microsoft Video Authenticator',
+    desc: 'Analysiert Fotos und Videos und gibt einen Manipulations-Wahrscheinlichkeitswert zurück. Ursprünglich für die US-Wahl 2020 entwickelt.',
+    category: 'Detection',
+    href: 'https://www.microsoft.com/en-us/research/project/video-authenticator/',
+  },
+  {
+    name: 'Reality Defender',
+    desc: 'Enterprise-Plattform zur Echtzeit-Erkennung von Deepfakes in Video Calls, Audio und Bildern — mit API-Integration für bestehende Systeme.',
+    category: 'Enterprise',
+    href: 'https://realitydefender.com',
+  },
+  {
+    name: 'Content Credentials (C2PA)',
+    desc: 'Offener Industriestandard (Adobe, Microsoft, Google u. a.) für digitale Herkunftsnachweise — bettet unveränderliche Metadaten in Medien ein.',
+    category: 'Standard',
+    href: 'https://contentcredentials.org',
+  },
+  {
+    name: 'InVID / WeVerify',
+    desc: 'Browser-Plugin für Journalisten und Faktenchecker: Video-Verifikation, Reverse Image Search und Metadaten-Analyse in einem Tool.',
+    category: 'Journalismus',
+    href: 'https://www.invid-project.eu/tools-and-services/invid-verification-plugin/',
+  },
+  {
+    name: 'TrueMedia.org',
+    desc: 'Non-Profit-Plattform zur kostenlosen Deepfake-Analyse von politischen Inhalten — gegründet von KI-Forschern aus Stanford und MIT.',
+    category: 'Non-Profit',
+    href: 'https://www.truemedia.org',
+  },
 ]
 
 const takeaways = [
@@ -127,27 +157,74 @@ const takeaways = [
   'KI-Gesetzgebung (EU AI Act) und technische Standards (C2PA) schaffen allmählich Gegenmaßnahmen.',
 ]
 
-function ChecklistSection({ categoryData }) {
-  const [checked, setChecked] = useState({})
+// Kategorie-Badge-Farben
+const CATEGORY_COLORS = {
+  Detection:    'bg-blue-50 text-blue-700 border-blue-200',
+  Enterprise:   'bg-purple-50 text-purple-700 border-purple-200',
+  Standard:     'bg-green-50 text-green-700 border-green-200',
+  Journalismus: 'bg-orange-50 text-orange-700 border-orange-200',
+  'Non-Profit': 'bg-gray-100 text-gray-700 border-gray-300',
+}
+
+function ChecklistSection({ categoryData, storageKey }) {
+  const [checked, setChecked] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(storageKey)
+      return saved ? JSON.parse(saved) : {}
+    } catch {
+      return {}
+    }
+  })
 
   const toggle = (catIdx, itemIdx) => {
     const key = `${catIdx}-${itemIdx}`
-    setChecked((c) => ({ ...c, [key]: !c[key] }))
+    setChecked((c) => {
+      const next = { ...c, [key]: !c[key] }
+      try { sessionStorage.setItem(storageKey, JSON.stringify(next)) } catch {}
+      return next
+    })
+  }
+
+  const reset = () => {
+    setChecked({})
+    try { sessionStorage.removeItem(storageKey) } catch {}
   }
 
   const total = categoryData.reduce((acc, cat) => acc + cat.items.length, 0)
   const done = Object.values(checked).filter(Boolean).length
+  const pct = total > 0 ? (done / total) * 100 : 0
 
   return (
     <div>
       {/* Progress */}
       <div className="flex items-center justify-between mb-5">
-        <p className="text-sm font-medium text-gray-600">{done} / {total} Maßnahmen umgesetzt</p>
-        <div className="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div
-            animate={{ width: `${(done / total) * 100}%` }}
-            className="h-full bg-red-600 rounded-full"
-          />
+        <p className="text-sm font-medium text-gray-600">
+          {done} / {total} Maßnahmen umgesetzt
+          {done > 0 && (
+            <button
+              onClick={reset}
+              className="ml-3 text-xs text-gray-400 hover:text-red-500 underline underline-offset-2 transition-colors"
+            >
+              Zurücksetzen
+            </button>
+          )}
+        </p>
+        <div className="flex items-center gap-2">
+          {pct === 100 && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-xs font-semibold text-green-600"
+            >
+              ✓ Vollständig
+            </motion.span>
+          )}
+          <div className="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <motion.div
+              animate={{ width: `${pct}%` }}
+              className={`h-full rounded-full transition-colors ${pct === 100 ? 'bg-green-500' : 'bg-red-600'}`}
+            />
+          </div>
         </div>
       </div>
 
@@ -191,7 +268,14 @@ function ChecklistSection({ categoryData }) {
 }
 
 export default function Schutzmassnahmen() {
-  const [activeTab, setActiveTab] = useState('privat')
+  const [activeTab, setActiveTab] = useState(() => {
+    try { return sessionStorage.getItem('schutz_tab') || 'privat' } catch { return 'privat' }
+  })
+
+  const handleTabChange = (id) => {
+    setActiveTab(id)
+    try { sessionStorage.setItem('schutz_tab', id) } catch {}
+  }
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
@@ -209,7 +293,7 @@ export default function Schutzmassnahmen() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-red-600 text-white shadow-sm'
@@ -229,7 +313,7 @@ export default function Schutzmassnahmen() {
             transition={{ duration: 0.2 }}
             className="card"
           >
-            <ChecklistSection categoryData={measures[activeTab]} />
+            <ChecklistSection categoryData={measures[activeTab]} storageKey={`schutz_checked_${activeTab}`} />
           </motion.div>
         </div>
       </section>
@@ -252,24 +336,34 @@ export default function Schutzmassnahmen() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
-                className="card group hover:border-red-200"
+                className="card group hover:border-red-200 flex flex-col"
               >
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-red-50 transition-colors">
                     <Shield size={18} className="text-gray-500 group-hover:text-red-600 transition-colors" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">{tool.name}</h3>
-                    <span className="text-xs text-gray-400">{tool.category}</span>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-tight">{tool.name}</h3>
+                    <span
+                      className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full border ${
+                        CATEGORY_COLORS[tool.category] ?? 'bg-gray-100 text-gray-600 border-gray-200'
+                      }`}
+                    >
+                      {tool.category}
+                    </span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-4">{tool.desc}</p>
+
+                <p className="text-sm text-gray-600 mb-4 flex-1">{tool.desc}</p>
+
                 <a
                   href={tool.href}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 hover:text-red-700 transition-colors group/link mt-auto"
                 >
                   Tool besuchen
-                  <ExternalLink size={11} />
+                  <ExternalLink size={11} className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                 </a>
               </motion.div>
             ))}
