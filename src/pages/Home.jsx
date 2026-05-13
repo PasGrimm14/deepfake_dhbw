@@ -9,7 +9,8 @@ import {
 // ─── Audio-Datei hier eintragen, sobald sie vorliegt ────────────────────────
 // Datei in /public/audio/ ablegen, z.B. /public/audio/intro.mp3
 // Dann diese Zeile ändern:
-const INTRO_AUDIO_SRC = null // z.B. '/audio/intro.mp3'
+// const INTRO_AUDIO_SRC = null // z.B. '/audio/intro.mp3'
+const INTRO_AUDIO_SRC = '/audio/intro.mp3'
 
 function useAudioPlayer(src) {
   const audioRef = useRef(null)
