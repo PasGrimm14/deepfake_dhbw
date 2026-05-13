@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Video, Image, Mic, Cpu, Clock, Play, ChevronRight, Layers } from 'lucide-react'
+import {
+  Video, Image, Mic, Cpu, Clock, Play, ChevronRight, Layers,
+  DollarSign, Globe, ShieldAlert, Gavel, Zap
+} from 'lucide-react'
 import PageHero from '../components/PageHero'
 import SectionDivider from '../components/SectionDivider'
 import InfoCard from '../components/InfoCard'
@@ -27,8 +30,7 @@ const tabs = [
         { title: 'Post-Processing', desc: 'Beleuchtung, Farbanpassung und Übergänge werden geglättet.' },
       ],
       tools: ['DeepFaceLab', 'FaceSwap', 'Stable Diffusion', 'Runway Gen-2'],
-      videoPlaceholder: 'Video Deepfake — Technologie Erklärt',
-      videoId: 'HJMx9n5mFSM'
+      videoId: 'HJMx9n5mFSM',
     },
   },
   {
@@ -46,8 +48,7 @@ const tabs = [
         { title: 'Super Resolution', desc: 'Niedrig aufgelöste Outputs werden hochskaliert und geschärft.' },
       ],
       tools: ['Stable Diffusion', 'Midjourney', 'DALL-E 3', 'Adobe Firefly'],
-      videoPlaceholder: 'Wie KI Bilder generiert — Eine Einführung',
-      videoId: 'sFztPP9qPRc'
+      videoId: 'sFztPP9qPRc',
     },
   },
   {
@@ -65,21 +66,91 @@ const tabs = [
         { title: 'Real-Time Cloning', desc: 'Live-Konversionstools wandeln Stimmen in Echtzeit um.' },
       ],
       tools: ['ElevenLabs', 'Resemble AI', 'Microsoft VALL-E', 'Tortoise TTS'],
-      videoPlaceholder: 'Voice Cloning Demo & Risiken',
-      videoId: 'egmetsfTm3c'
+      videoId: 'egmetsfTm3c',
     },
   },
 ]
 
+// Kategorie-Typen für die Timeline
+const CATEGORY = {
+  TECH:    { label: 'Technologie', icon: Cpu,        color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  FRAUD:   { label: 'Betrug',      icon: DollarSign, color: 'bg-red-100 text-red-700 border-red-200' },
+  POLITICS:{ label: 'Politik',     icon: Globe,      color: 'bg-orange-100 text-orange-700 border-orange-200' },
+  LAW:     { label: 'Gesetz',      icon: Gavel,      color: 'bg-green-100 text-green-700 border-green-200' },
+  THREAT:  { label: 'Bedrohung',   icon: ShieldAlert,color: 'bg-purple-100 text-purple-700 border-purple-200' },
+}
+
 const timeline = [
-  { year: '2017', event: 'Reddit-User "deepfakes" veröffentlicht erste Face-Swap-Videos — der Begriff entsteht.' },
-  { year: '2018', event: 'DeepFaceLab und FaceSwap als Open-Source veröffentlicht. Erste politische Fakes.' },
-  { year: '2019', event: 'Erste Voice-Cloning-Betrugsmasche: CEO-Stimme geklont, £220K erbeutet.' },
-  { year: '2020', event: 'Realistische "Deepfake Presidents" auf sozialen Medien. TikTok-Deepfakes viral.' },
-  { year: '2021', event: 'Tom Cruise DeepFake auf TikTok erschüttert Öffentlichkeit. Qualitätssprung durch neue Modelle.' },
-  { year: '2022', event: 'Stable Diffusion open-source: Bild-Deepfakes für jeden zugänglich. Erste KYC-Bypässe.' },
-  { year: '2023', event: 'ElevenLabs Voice Cloning mit 3s Audio. $25M CEO-Fraud-Fall in Hongkong.' },
-  { year: '2024', event: 'Echtzeit-Face-Swap in Video Calls. Erste KI-Deepfake-Gesetze weltweit.' },
+  {
+    year: '2017',
+    category: CATEGORY.TECH,
+    title: 'Der Begriff entsteht',
+    event: 'Reddit-User „deepfakes" veröffentlicht erste Face-Swap-Videos. Die Technologie basiert auf GANs — der Begriff „Deepfake" ist geboren.',
+    milestone: false,
+  },
+  {
+    year: '2018',
+    category: CATEGORY.TECH,
+    title: 'Open-Source-Welle',
+    event: 'DeepFaceLab und FaceSwap werden als Open-Source veröffentlicht. Erste politische Fakes kursieren, die Einstiegshürde sinkt drastisch.',
+    milestone: false,
+  },
+  {
+    year: '2019',
+    category: CATEGORY.FRAUD,
+    title: 'Erster Voice-Cloning-Betrug',
+    event: 'Weltweit erster dokumentierter CEO-Fraud per Voice Cloning: Angreifer klonen die Stimme eines Konzernchefs und erbeuten £220.000 von einem britischen Energieunternehmen.',
+    milestone: true,
+  },
+  {
+    year: '2020',
+    category: CATEGORY.POLITICS,
+    title: 'Deepfakes werden mainstream',
+    event: 'Realistische „Deepfake Presidents" verbreiten sich viral auf TikTok und Twitter. Erste Warnungen von Nachrichtendiensten über Wahlbeeinflussung.',
+    milestone: false,
+  },
+  {
+    year: '2021',
+    category: CATEGORY.TECH,
+    title: 'Tom Cruise erschüttert die Öffentlichkeit',
+    event: 'Ein täuschend echter Tom-Cruise-Deepfake auf TikTok wird millionenfach geteilt — und zeigt erstmals einer breiten Öffentlichkeit, wie weit die Technologie schon fortgeschritten ist.',
+    milestone: true,
+  },
+  {
+    year: '2022',
+    category: CATEGORY.THREAT,
+    title: 'Stable Diffusion & Kriegspropaganda',
+    event: 'Stable Diffusion wird open-source veröffentlicht: Bild-Deepfakes für jeden zugänglich. Parallel dazu: Ein gefälschtes Zelensky-Video fordert ukrainische Soldaten zur Kapitulation auf.',
+    milestone: true,
+  },
+  {
+    year: '2023',
+    category: CATEGORY.FRAUD,
+    title: 'Voice Cloning mit 3 Sekunden Audio',
+    event: 'ElevenLabs ermöglicht überzeugenden Voice Clone aus nur 3 Sekunden Audiomaterial. Deepfake-Vorfälle steigen um 3.000 % im Jahresvergleich (Sumsub).',
+    milestone: false,
+  },
+  {
+    year: '2024',
+    category: CATEGORY.FRAUD,
+    title: '$25 Mio. Verlust in einem Anruf',
+    event: 'In Hongkong überweist ein Finanzmitarbeiter $25 Mio. nach einem Deepfake-Videocall mit dem vermeintlichen CFO. Alle Teilnehmer im Call waren KI-generiert. Ø Unternehmensschaden pro Vorfall: $500.000.',
+    milestone: true,
+  },
+  {
+    year: '2025',
+    category: CATEGORY.LAW,
+    title: 'Erstes US-Bundesgesetz',
+    event: 'Der TAKE IT DOWN Act wird am 19. Mai 2025 in Kraft gesetzt — das erste US-Bundesgesetz gegen Deepfakes. Plattformen müssen non-konsensuelles Material innerhalb von 48h entfernen. Deepfake-as-a-Service boomt.',
+    milestone: true,
+  },
+  {
+    year: '2026',
+    category: CATEGORY.POLITICS,
+    title: 'Politische Deepfakes im Wahlkampf',
+    event: 'Erstmals wird ein politischer Kandidat in einem minutenlangen Deepfake-Video realistisch nachgebildet — produziert vom NRSC für die US-Midterms. 46 US-Bundesstaaten haben inzwischen Deepfake-Gesetze erlassen.',
+    milestone: true,
+  },
 ]
 
 const techCards = [
@@ -148,7 +219,6 @@ export default function WasSindDeepfakes() {
             Wähle eine Kategorie und erkunde die technischen Details.
           </p>
 
-          {/* Tab buttons */}
           <div className="flex flex-wrap justify-center gap-1 mb-10 bg-white border border-gray-200 rounded-xl p-1.5 max-w-lg mx-auto shadow-sm">
             {tabs.map((tab) => (
               <button
@@ -167,7 +237,6 @@ export default function WasSindDeepfakes() {
             ))}
           </div>
 
-          {/* Tab content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -177,7 +246,6 @@ export default function WasSindDeepfakes() {
               transition={{ duration: 0.25 }}
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left: Info */}
                 <div className="card">
                   <div className="flex items-center gap-3 mb-5">
                     <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
@@ -188,8 +256,6 @@ export default function WasSindDeepfakes() {
                   <p className="text-gray-600 text-sm leading-relaxed mb-6">
                     {current.content.description}
                   </p>
-
-                  {/* Process steps */}
                   <div className="space-y-3">
                     {current.content.steps.map((step, i) => (
                       <div key={i} className="flex items-start gap-3">
@@ -203,18 +269,11 @@ export default function WasSindDeepfakes() {
                       </div>
                     ))}
                   </div>
-
-                  {/* Tools */}
                   <div className="mt-6 pt-5 border-t border-gray-100">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                      Bekannte Tools
-                    </p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Bekannte Tools</p>
                     <div className="flex flex-wrap gap-2">
                       {current.content.tools.map((tool) => (
-                        <span
-                          key={tool}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
-                        >
+                        <span key={tool} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
                           {tool}
                         </span>
                       ))}
@@ -222,7 +281,6 @@ export default function WasSindDeepfakes() {
                   </div>
                 </div>
 
-                {/* Right: Video placeholder */}
                 <div className="card flex flex-col">
                   <div className="flex-1 rounded-lg overflow-hidden min-h-[220px]">
                     <iframe
@@ -265,48 +323,106 @@ export default function WasSindDeepfakes() {
 
       {/* ── TIMELINE ──────────────────────────────────────────────────────── */}
       <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center mb-3">Timeline der Deepfake-Evolution</h2>
-          <p className="section-subtitle text-center mb-12">2017 bis heute</p>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-title text-center mb-2">Timeline der Deepfake-Evolution</h2>
+          <p className="section-subtitle text-center mb-4">2017 bis heute</p>
 
+          {/* Legende */}
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {Object.values(CATEGORY).map((cat) => (
+              <span
+                key={cat.label}
+                className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${cat.color}`}
+              >
+                <cat.icon size={11} />
+                {cat.label}
+              </span>
+            ))}
+          </div>
+
+          {/* Timeline-Items */}
           <div className="relative">
-            {/* Vertical line */}
-            <div className="absolute left-4 sm:left-1/2 top-0 bottom-0 w-px bg-gray-200 -translate-x-1/2" />
+            {/* Vertikale Linie */}
+            <div className="absolute left-[28px] top-0 bottom-0 w-px bg-gradient-to-b from-gray-200 via-gray-300 to-gray-100" />
 
-            <div className="space-y-8">
-              {timeline.map((item, i) => (
-                <motion.div
-                  key={item.year}
-                  initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  className={`relative flex items-start gap-6 sm:gap-0 ${
-                    i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'
-                  }`}
-                >
-                  {/* Dot */}
-                  <div className="absolute left-4 sm:left-1/2 w-3 h-3 bg-red-600 rounded-full -translate-x-1/2 mt-1.5 border-2 border-white ring-2 ring-red-200" />
-
-                  {/* Content */}
-                  <div
-                    className={`ml-10 sm:ml-0 sm:w-[calc(50%-2rem)] ${
-                      i % 2 === 0 ? 'sm:pr-8' : 'sm:pl-8'
-                    }`}
+            <div className="space-y-4">
+              {timeline.map((item, i) => {
+                const CatIcon = item.category.icon
+                return (
+                  <motion.div
+                    key={item.year}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ delay: i * 0.06 }}
+                    className="relative flex gap-5"
                   >
-                    <div className="card">
-                      <span className="inline-block px-2.5 py-1 bg-red-600 text-white text-xs font-bold rounded mb-2">
-                        {item.year}
-                      </span>
-                      <p className="text-sm text-gray-700 leading-relaxed">{item.event}</p>
+                    {/* Dot + Icon */}
+                    <div className="flex-shrink-0 flex flex-col items-center" style={{ width: 56 }}>
+                      <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center z-10 shadow-sm ${
+                        item.milestone
+                          ? 'bg-red-600 border-red-600'
+                          : 'bg-white border-gray-200'
+                      }`}>
+                        <CatIcon
+                          size={item.milestone ? 22 : 18}
+                          className={item.milestone ? 'text-white' : 'text-gray-400'}
+                        />
+                      </div>
                     </div>
+
+                    {/* Content */}
+                    <div className={`flex-1 mb-2 rounded-xl border p-4 shadow-sm transition-shadow hover:shadow-md ${
+                      item.milestone
+                        ? 'border-red-200 bg-red-50/40'
+                        : 'border-gray-200 bg-white'
+                    }`}>
+                      {/* Header */}
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                          item.milestone
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {item.year}
+                        </span>
+                        <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${item.category.color}`}>
+                          <CatIcon size={10} />
+                          {item.category.label}
+                        </span>
+                        {item.milestone && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
+                            <Zap size={10} className="fill-red-600" />
+                            Meilenstein
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className={`font-bold mb-1 ${
+                        item.milestone ? 'text-gray-900 text-base' : 'text-gray-800 text-sm'
+                      }`}>
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">{item.event}</p>
+                    </div>
+                  </motion.div>
+                )
+              })}
+
+              {/* "Jetzt" Marker am Ende */}
+              <div className="relative flex gap-5 items-center">
+                <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 56 }}>
+                  <div className="w-8 h-8 rounded-full bg-gray-900 border-2 border-gray-900 flex items-center justify-center z-10">
+                    <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
                   </div>
-                </motion.div>
-              ))}
+                </div>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Jetzt</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
     </motion.div>
   )
 }
