@@ -28,7 +28,7 @@ const tabs = [
       ],
       tools: ['DeepFaceLab', 'FaceSwap', 'Stable Diffusion', 'Runway Gen-2'],
       videoPlaceholder: 'Video Deepfake — Technologie Erklärt',
-      videoId: 'vvKXL7-y08U'
+      videoId: 'HJMx9n5mFSM'
     },
   },
   {
@@ -224,22 +224,14 @@ export default function WasSindDeepfakes() {
 
                 {/* Right: Video placeholder */}
                 <div className="card flex flex-col">
-                  <div className="flex-1 bg-gray-900 rounded-lg flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-5"
-                      style={{
-                        backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-                        backgroundSize: '24px 24px',
-                      }}
+                  <div className="flex-1 rounded-lg overflow-hidden min-h-[220px]">
+                    <iframe
+                      className="w-full h-full min-h-[220px]"
+                      src={`https://www.youtube.com/embed/${current.content.videoId}`}
+                      title={current.content.headline}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
                     />
-                    <div className="relative w-14 h-14 bg-red-600 rounded-full flex items-center justify-center mb-4 shadow-xl">
-                      <Play size={22} className="text-white ml-1" />
-                    </div>
-                    <p className="relative text-white font-medium text-sm text-center px-8 mb-2">
-                      {current.content.videoPlaceholder}
-                    </p>
-                    <p className="relative text-gray-400 text-xs text-center">
-                      YouTube Video Placeholder — hier Link einfügen
-                    </p>
                   </div>
                   <div className="mt-5 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-xs font-semibold text-yellow-800 mb-1">Erkennungsmerkmale</p>
