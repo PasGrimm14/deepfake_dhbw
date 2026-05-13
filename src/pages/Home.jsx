@@ -123,7 +123,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-full uppercase tracking-wider mb-6"
           >
             <Zap size={11} className="fill-red-600" />
-            DHBW Projekt — Aufklärungsportal 2024
+            DHBW Projekt — Aufklärungsportal 2026
           </motion.div>
 
           <motion.h1
