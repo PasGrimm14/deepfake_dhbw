@@ -123,7 +123,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-full uppercase tracking-wider mb-6"
           >
             <Zap size={11} className="fill-red-600" />
-            DHBW Projekt — Aufklärungsportal 2026
+            DHBW Projekt - Aufklärungsportal 2026
           </motion.div>
 
           <motion.h1
@@ -146,7 +146,7 @@ export default function Home() {
             className="text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed mb-8"
           >
             KI-generierte Fälschungen sind zur größten Bedrohung der digitalen Informationslandschaft geworden.
-            Dieses Portal klärt auf — mit interaktiven Tools, realen Fallbeispielen und konkreten Schutzmaßnahmen.
+            Dieses Portal klärt auf - mit interaktiven Tools, realen Fallbeispielen und konkreten Schutzmaßnahmen.
           </motion.p>
 
           <motion.div
@@ -228,7 +228,7 @@ export default function Home() {
               transition={{ delay: 0.08 }}
               className="section-subtitle max-w-xl mx-auto"
             >
-              Sechs Module — von der technischen Erklärung bis zum KI-gestützten Scanner.
+              Sechs Module - von der technischen Erklärung bis zum KI-gestützten Scanner.
             </motion.p>
           </div>
 
@@ -272,7 +272,7 @@ export default function Home() {
                 Die Bedrohungslage 2024
               </h2>
               <p className="text-gray-600 leading-relaxed mb-6">
-                Deepfakes und Voice Cloning sind keine Science-Fiction mehr — sie werden täglich für Betrug,
+                Deepfakes und Voice Cloning sind keine Science-Fiction mehr - sie werden täglich für Betrug,
                 Desinformation und politische Manipulation eingesetzt. Die Technologie ist frei verfügbar,
                 die Ergebnisse werden immer überzeugender.
               </p>
