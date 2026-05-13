@@ -95,7 +95,7 @@ class ImageDeepfakeDetector:
         result = self.predict(img_rgb)
 
         # Occlusion-Sensitivity Heatmap
-        heatmap = self._occlusion_sensitivity(img_rgb, stride=16, patch_size=32)
+        heatmap = self._occlusion_sensitivity(img_rgb, stride=12, patch_size=24)
         heatmap_b64 = self._heatmap_to_base64(img_rgb, heatmap)
 
         # Verdächtige Regionen beschreiben
