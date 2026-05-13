@@ -26,16 +26,16 @@ RUN npm run build
 # ─── Stage 2: Serve ───────────────────────────────────────────
 FROM nginx:1.27-alpine AS production
 
-# Eigene nginx-Konfiguration für SPA-Routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Build-Artefakte aus Stage 1 kopieren
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Healthcheck
+# NEU: Startup-Script das ENV-Variablen injiziert
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost/favicon.svg || exit 1
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/docker-entrypoint.sh"]

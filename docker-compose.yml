@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
+      - SCANNER_API_URL=https://deepfake-back.pasgri-cloud.de
     networks:
       - default
       - proxy-network

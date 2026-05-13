@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-
+  define: {
+    'import.meta.env.VITE_SCANNER_API_URL': JSON.stringify('VITE_SCANNER_API_URL_PLACEHOLDER')
+  },
   server: {
     proxy: {
-      // Alle Requests an /notion-api werden an api.notion.com weitergeleitet.
-      // So umgeht der Dev-Server das CORS-Problem im Browser.
       '/notion-api': {
         target: 'https://api.notion.com',
         changeOrigin: true,
