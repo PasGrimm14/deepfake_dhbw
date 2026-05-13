@@ -28,6 +28,7 @@ const tabs = [
       ],
       tools: ['DeepFaceLab', 'FaceSwap', 'Stable Diffusion', 'Runway Gen-2'],
       videoPlaceholder: 'Video Deepfake — Technologie Erklärt',
+      videoId: 'vvKXL7-y08U'
     },
   },
   {
@@ -46,6 +47,7 @@ const tabs = [
       ],
       tools: ['Stable Diffusion', 'Midjourney', 'DALL-E 3', 'Adobe Firefly'],
       videoPlaceholder: 'Wie KI Bilder generiert — Eine Einführung',
+      videoId: 'sFztPP9qPRc'
     },
   },
   {
@@ -64,6 +66,7 @@ const tabs = [
       ],
       tools: ['ElevenLabs', 'Resemble AI', 'Microsoft VALL-E', 'Tortoise TTS'],
       videoPlaceholder: 'Voice Cloning Demo & Risiken',
+      videoId: 'egmetsfTm3c'
     },
   },
 ]
