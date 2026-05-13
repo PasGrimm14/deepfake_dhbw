@@ -30,3 +30,7 @@ Thumbs.db
 logs/
 *.log
 npm-debug.log*
+
+# Python
+venv/
+__pycache__

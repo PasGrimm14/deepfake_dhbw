@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # ─── Job 1: Build & Push Docker Image ───────────────────────
+  # ─── Job 1: Build & Push Frontend ───────────────────────────
   build-and-push:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -33,21 +33,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker Metadata (Tags & Labels)
+      - name: Extract Docker Metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # latest auf main-Branch
             type=raw,value=latest,enable={{is_default_branch}}
-            # Commit-SHA als zusätzlicher Tag (für Rollbacks)
             type=sha,prefix=sha-,format=short
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push Image
+      - name: Build and Push Frontend Image
         id: build
         uses: docker/build-push-action@v6
         with:
@@ -56,20 +54,57 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Build-Args: VITE_* Variablen aus GitHub Secrets einbetten
           build-args: |
             VITE_ANTHROPIC_API_KEY=${{ secrets.VITE_ANTHROPIC_API_KEY }}
             VITE_NOTION_TOKEN=${{ secrets.VITE_NOTION_TOKEN }}
             VITE_NOTION_DATABASE_ID=${{ secrets.VITE_NOTION_DATABASE_ID }}
-          # Cache für schnellere Builds
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+            VITE_SCANNER_API_URL=${{ secrets.VITE_SCANNER_API_URL }}
 
-  # ─── Job 2: Deploy via Portainer Webhook ────────────────────
+  # ─── Job 2: Build & Push Backend ────────────────────────────
+  build-and-push-backend:
+    name: Build Backend Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Backend Docker Metadata
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./backend.Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+
+  # ─── Job 3: Deploy via Portainer Webhook ────────────────────
   deploy:
     name: Deploy to Portainer
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs: [build-and-push, build-and-push-backend]
     environment: production
 
     steps:
@@ -101,5 +136,6 @@ jobs:
           echo "|-----|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Image | \`ghcr.io/${{ github.repository }}:latest\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend | \`ghcr.io/${{ github.repository }}:latest\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend | \`ghcr.io/${{ github.repository }}-backend:latest\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Deployed at | $(date -u '+%Y-%m-%d %H:%M UTC') |" >> $GITHUB_STEP_SUMMARY
