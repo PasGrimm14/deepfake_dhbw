@@ -8,7 +8,7 @@ const navLinks = [
   { to: '/was-sind-deepfakes', label: 'Was sind Deepfakes?' },
   { to: '/angriffsvektoren', label: 'Angriffsvektoren' },
   { to: '/awareness-portal', label: 'Awareness Portal' },
-  { to: '/deepfake-scanner', label: 'Scanner' },
+  // { to: '/deepfake-scanner', label: 'Scanner' },
   { to: '/schutzmassnahmen', label: 'Schutzmaßnahmen' },
   { to: '/praesentation', label: 'Präsentation' },
 ]
