@@ -26,14 +26,26 @@ services:
     environment:
       - NOTION_TOKEN=${NOTION_TOKEN}
       - PORT=3002
+
+  deepfake-backend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPO_NAME}-backend:latest
+    ports:
+      - 3003:8000
+    container_name: deepfake-backend
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - IMAGE_MODEL_PATH=models/deepfake_image.onnx
+      - VIDEO_FRAMES=10
     networks:
       - default
       - proxy-network
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
+      start_period: 20s
 
 networks:
   proxy-network:
