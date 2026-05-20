@@ -95,7 +95,7 @@ class ImageDeepfakeDetector:
         result = self.predict(img_rgb)
 
         # Occlusion-Sensitivity Heatmap
-        heatmap = self._occlusion_sensitivity(img_rgb, stride=16, patch_size=32)
+        heatmap = self._occlusion_sensitivity(img_rgb, stride=12, patch_size=24)
         heatmap_b64 = self._heatmap_to_base64(img_rgb, heatmap)
 
         # Verdächtige Regionen beschreiben
@@ -142,6 +142,7 @@ class ImageDeepfakeDetector:
 
         # Colormap anwenden (COLORMAP_JET: blau=sicher, rot=verdächtig)
         heatmap_uint8 = (heatmap_resized * 255).astype(np.uint8)
+        heatmap_uint8 = 255 - heatmap_uint8  # invertieren: rot=verdächtig
         colored = cv2.applyColorMap(heatmap_uint8, cv2.COLORMAP_JET)
         colored_rgb = cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
 
@@ -153,10 +154,10 @@ class ImageDeepfakeDetector:
         pil_img.save(buf, format="PNG")
         return base64.b64encode(buf.getvalue()).decode("utf-8")
 
-    def _describe_regions(self, heatmap: np.ndarray, threshold: float = 0.6) -> list[str]:
+    def _describe_regions(self, heatmap: np.ndarray, threshold: float = 0.35) -> list[str]:
         """
-        Beschreibt grob welche Gesichtsregionen verdächtig sind.
-        Teilt Bild in 9 Zonen (3x3 Grid): Stirn, Augen, Nase, Mund, Kinn, Wangen.
+        Nach Invertierung: niedrige Werte = verdächtig (rot), hohe Werte = unauffällig (blau)
+        Daher: zone.mean() < threshold → verdächtig
         """
         h, w = heatmap.shape
         zones = {
@@ -172,6 +173,6 @@ class ImageDeepfakeDetector:
         }
         suspicious = []
         for zone_name, zone_data in zones.items():
-            if zone_data.mean() > threshold:
+            if zone_data.mean() < threshold:  # < statt > wegen Invertierung
                 suspicious.append(zone_name)
         return suspicious

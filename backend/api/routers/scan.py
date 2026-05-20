@@ -56,7 +56,13 @@ async def scan_image(request: Request, file: UploadFile = File(...)):
 
     # Bytes → RGB NumPy
     pil_img = Image.open(io.BytesIO(contents)).convert("RGB")
-    img_rgb = np.array(pil_img)
+    
+    w, h = pil_img.size
+    s = min(w, h)
+    left = (w - s) // 2
+    top = (h - s) // 2
+    pil_img = pil_img.crop((left, top, left + s, top + s))
+    img_rgb = np.array(pil_img.resize((224, 224), Image.LANCZOS))
 
     t0 = time.time()
     models = request.app.state.models
